@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Award, BookOpen, Star, Cloud } from "lucide-react";
+import { Trophy, Award, BookOpen, Star, Cloud, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 // Credential details from Dhruv's resume
 const CERTS = {
@@ -12,6 +12,11 @@ const CERTS = {
       date: "2024",
       gradient: "linear-gradient(135deg, #eab308, #ca8a04)",
       icon: "trophy",
+      photos: [
+        "/gallery/startup%20battle/startup_battle_1.png",
+        "/gallery/startup%20battle/startup_battle_2.jpg",
+        "/gallery/startup%20battle/startup_battle_3.jpg",
+      ],
     },
     {
       title: "Winner – Hackathon Recursion 7.0",
@@ -20,6 +25,13 @@ const CERTS = {
       date: "2024",
       gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
       icon: "hackathon",
+      photos: [
+        "/gallery/Recursion/recursion_1.jpg",
+        "/gallery/Recursion/recursion_2.jpg",
+        "/gallery/Recursion/recursion_3.jpg",
+        "/gallery/Recursion/recursion_4.png",
+        "/gallery/Recursion/recursion_5.jpg",
+      ],
     },
   ],
   credentials: [
@@ -30,6 +42,7 @@ const CERTS = {
       date: "2023",
       gradient: "linear-gradient(135deg, #10b981, #047857)",
       icon: "blockchain",
+      photos: ["/gallery/certs/cert_1.png"],
     },
     {
       title: "IoT Edge Computing & Analytics",
@@ -38,6 +51,7 @@ const CERTS = {
       date: "2023",
       gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
       icon: "edge",
+      photos: ["/gallery/certs/cert_2.png"],
     },
     {
       title: "Google Cloud Launchpad",
@@ -46,12 +60,32 @@ const CERTS = {
       date: "2024",
       gradient: "linear-gradient(135deg, #f43f5e, #e11d48)",
       icon: "google",
+      photos: ["/gallery/certs/cert_3.png"],
     },
   ],
 };
 
 export default function Certificates() {
   const [tab, setTab] = useState("awards");
+  const [zoom, setZoom] = useState({ img: null, post: null, index: 0 });
+
+  const openZoom = (post, index) =>
+    setZoom({ img: post.photos[index], post, index });
+
+  const closeZoom = () => setZoom({ img: null, post: null, index: 0 });
+
+  const nextImage = () => {
+    if (!zoom.post) return;
+    const nextIndex = (zoom.index + 1) % zoom.post.photos.length;
+    setZoom({ ...zoom, img: zoom.post.photos[nextIndex], index: nextIndex });
+  };
+
+  const prevImage = () => {
+    if (!zoom.post) return;
+    const prevIndex =
+      (zoom.index - 1 + zoom.post.photos.length) % zoom.post.photos.length;
+    setZoom({ ...zoom, img: zoom.post.photos[prevIndex], index: prevIndex });
+  };
 
   const renderBadgeIcon = (iconName) => {
     switch (iconName) {
@@ -134,25 +168,64 @@ export default function Certificates() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  minHeight: "300px"
+                  minHeight: "340px"
                 }}
               >
                 <div>
-                  {/* Glowing SVG Badge Header */}
-                  <div
-                    style={{
-                      height: 120,
-                      borderRadius: 10,
-                      background: c.gradient,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginBottom: 16,
-                      boxShadow: "inset 0 0 20px rgba(0,0,0,0.15)"
-                    }}
-                  >
-                    {renderBadgeIcon(c.icon)}
-                  </div>
+                  {/* Photo Header */}
+                  {c.photos && c.photos.length > 0 ? (
+                    <div
+                      style={{
+                        display: "grid",
+                        gap: 8,
+                        borderRadius: 10,
+                        overflow: "hidden",
+                        marginBottom: 16,
+                        height: 160,
+                        gridTemplateColumns: c.photos.length > 1 ? "repeat(auto-fit, minmax(60px, 1fr))" : "1fr"
+                      }}
+                    >
+                      {c.photos.slice(0, 3).map((src, i) => (
+                        <motion.div
+                          key={i}
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ type: "spring", stiffness: 250 }}
+                          onClick={() => openZoom(c, i)}
+                          style={{
+                            cursor: "pointer",
+                            overflow: "hidden",
+                            height: "100%"
+                          }}
+                        >
+                          <img
+                            src={src}
+                            alt={c.title}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover"
+                            }}
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* Glowing SVG Badge Header */
+                    <div
+                      style={{
+                        height: 120,
+                        borderRadius: 10,
+                        background: c.gradient,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: 16,
+                        boxShadow: "inset 0 0 20px rgba(0,0,0,0.15)"
+                      }}
+                    >
+                      {renderBadgeIcon(c.icon)}
+                    </div>
+                  )}
                   
                   <strong style={{ fontSize: 16, color: "#fff", display: "block", marginBottom: 6 }}>
                     {c.title}
@@ -171,6 +244,101 @@ export default function Certificates() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* 🔍 Zoom Overlay */}
+      <AnimatePresence>
+        {zoom.img && (
+          <div
+            onClick={closeZoom}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(10, 10, 10, 0.95)",
+              backdropFilter: "blur(6px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 99999
+            }}
+          >
+            <motion.img
+              key={zoom.img}
+              src={zoom.img}
+              alt="zoom"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                maxWidth: "90%",
+                maxHeight: "85vh",
+                borderRadius: 12,
+                boxShadow: "0 0 30px rgba(255, 255, 255, 0.1)",
+                objectFit: "contain"
+              }}
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {zoom.post?.photos.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevImage();
+                  }}
+                  style={{
+                    position: "absolute",
+                    left: "5%",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    cursor: "pointer",
+                    opacity: 0.8
+                  }}
+                >
+                  <ChevronLeft size={40} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
+                  style={{
+                    position: "absolute",
+                    right: "5%",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    cursor: "pointer",
+                    opacity: 0.8
+                  }}
+                >
+                  <ChevronRight size={40} />
+                </button>
+              </>
+            )}
+            <button
+              onClick={closeZoom}
+              style={{
+                position: "absolute",
+                top: "5%",
+                right: "5%",
+                background: "transparent",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer",
+                opacity: 0.8
+              }}
+            >
+              <X size={36} />
+            </button>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

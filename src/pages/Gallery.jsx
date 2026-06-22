@@ -1,37 +1,25 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import "../CSS/Gallery.css";
 
-const IMAGES = {
-  projects: [
-    {
-      id: 1,
-      caption:
-        "📖 ReadBetter — Accessible Dyslexia Assistant for the Swift Student Challenge",
-      photos: ["/gallery/m.png", "/gallery/m2.jpeg"],
-    },
-    
-    {
-      id: 2,
-      caption:
-        "📊 CodeNest — Codeforces Analyzer and Performance Insights Dashboard",
-      photos: ["/gallery/profilex.jpeg", "/gallery/profilex2.jpeg","/gallery/profilex3.jpeg", "/gallery/profilex4.jpeg"],
-    },
-  ],
-  achievements: [
-    {
-      id: 1,
-      caption: "Winning Startup Battle (AI-IoT sector) and Recursion 7.0 hackathons 🏆!",
-      photos: [],
-    },
-    {
-      id: 2,
-      caption: "Technical Secretary & Event Head at Computer Engineering Students Society (CESS) 💻",
-      photos: [],
-    },
-  ],
-};
+const MEETUP_PHOTOS = [
+  { src: "/gallery/meetups/swift-bharat-1.jpg", highlight: true },
+  { src: "/gallery/meetups/swift-bharat-2.jpg", highlight: true },
+  { src: "/gallery/meetups/swift-mumbai-summer-1.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-summer-2.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-summer-3.jpg" },
+  { src: "/gallery/meetups/dhruv-meetup-1.jpg" },
+  { src: "/gallery/meetups/dhruv-meetup-2.jpg" },
+  { src: "/gallery/meetups/codex-mumbai-1.jpg" },
+  { src: "/gallery/meetups/codex-mumbai-2.jpg" },
+  { src: "/gallery/meetups/build-beyond-screens-1.jpg" },
+  { src: "/gallery/meetups/build-beyond-screens-2.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-womenintech-1.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-womenintech-2.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-1.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-2.jpg" },
+];
 
 // ✨ Animation Variants
 const pageVariants = {
@@ -66,26 +54,9 @@ const tabContentVariants = {
 };
 
 export default function Gallery() {
-  const [tab, setTab] = useState("projects");
-  const [zoom, setZoom] = useState({ img: null, post: null, index: 0 });
+  const [zoom, setZoom] = useState(null);
 
-  const openZoom = (post, index) =>
-    setZoom({ img: post.photos[index], post, index });
-
-  const closeZoom = () => setZoom({ img: null, post: null, index: 0 });
-
-  const nextImage = () => {
-    if (!zoom.post) return;
-    const nextIndex = (zoom.index + 1) % zoom.post.photos.length;
-    setZoom({ ...zoom, img: zoom.post.photos[nextIndex], index: nextIndex });
-  };
-
-  const prevImage = () => {
-    if (!zoom.post) return;
-    const prevIndex =
-      (zoom.index - 1 + zoom.post.photos.length) % zoom.post.photos.length;
-    setZoom({ ...zoom, img: zoom.post.photos[prevIndex], index: prevIndex });
-  };
+  const closeZoom = () => setZoom(null);
 
   return (
     <motion.section
@@ -97,72 +68,41 @@ export default function Gallery() {
     >
       {/* 🌟 Title */}
       <motion.h2 className="gallery-title" variants={childVariants}>
-        Gallery
+        Meetups
       </motion.h2>
 
-      {/* 🧭 Tabs */}
-      <motion.div className="tab-buttons" variants={childVariants}>
-        {[
-          { id: "projects", label: "Projects" },
-          { id: "achievements", label: "Community Meetups" }
-        ].map((type) => (
-          <motion.button
-            key={type.id}
-            className={`tab ${tab === type.id ? "active" : ""}`}
-            onClick={() => setTab(type.id)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+      {/* 🖼️ Flat Photo Grid */}
+      <motion.div
+        className="photo-feed"
+        variants={tabContentVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {MEETUP_PHOTOS.map((photo, i) => (
+          <motion.div
+            key={i}
+            className={`photo-tile ${photo.highlight ? "highlighted" : ""}`}
+            variants={childVariants}
+            whileHover={{ scale: 1.04 }}
+            transition={{ type: "spring", stiffness: 250 }}
+            onClick={() => setZoom(photo.src)}
           >
-            {type.label}
-          </motion.button>
+            <img
+              src={photo.src}
+              alt={`meetup-${i}`}
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+                e.currentTarget.parentElement.classList.add("missing");
+              }}
+            />
+            {photo.highlight && <span className="featured-badge">⭐ Swift Bharat</span>}
+          </motion.div>
         ))}
       </motion.div>
 
-      {/* 🖼️ Posts with Animation on Tab Switch */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={tab} // Important for AnimatePresence to detect tab change
-          className="post-feed"
-          variants={tabContentVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          {IMAGES[tab].map((post) => (
-            <motion.div
-              key={post.id}
-              className="post-card"
-              variants={childVariants}
-              whileHover={{ y: -4 }}
-            >
-              <p className="caption">{post.caption}</p>
-              {post.photos && post.photos.length > 0 && (
-                <div
-                  className={`photo-grid ${
-                    post.photos.length > 1 ? "multi" : "single"
-                  }`}
-                >
-                  {post.photos.map((src, i) => (
-                    <motion.div
-                      key={i}
-                      className="photo-item"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ type: "spring", stiffness: 250 }}
-                      onClick={() => openZoom(post, i)}
-                    >
-                      <img src={src} alt="gallery" />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
-
       {/* 🔍 Zoom Overlay */}
       <AnimatePresence>
-        {zoom.img && (
+        {zoom && (
           <motion.div
             className="zoom-overlay"
             initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
@@ -171,8 +111,8 @@ export default function Gallery() {
             transition={{ duration: 0.4 }}
           >
             <motion.img
-              key={zoom.img}
-              src={zoom.img}
+              key={zoom}
+              src={zoom}
               alt="zoom"
               className="zoom-img"
               initial={{ scale: 0.9, opacity: 0 }}
@@ -180,17 +120,6 @@ export default function Gallery() {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.3 }}
             />
-
-            {zoom.post?.photos.length > 1 && (
-              <>
-                <button className="nav-btn left" onClick={prevImage}>
-                  <ChevronLeft size={32} />
-                </button>
-                <button className="nav-btn right" onClick={nextImage}>
-                  <ChevronRight size={32} />
-                </button>
-              </>
-            )}
             <button className="close-btn" onClick={closeZoom}>
               <X size={28} />
             </button>

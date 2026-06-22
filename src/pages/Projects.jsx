@@ -39,15 +39,6 @@ const PROJECTS = {
       tech: ['SwiftUI', 'Kotlin', 'REST APIs', 'Payment Gateways', 'Android Studio'],
       live: '#',
       code: 'http://github.com/dhruvgohil448'
-    },
-    {
-      title: '💼 iOS Developer (Freelance) – Fyre Gig',
-      desc: 'Owned, stabilized, and led optimization for the iOS layer of high-traffic production React Native fintech applications. Fixed crashes, resolved build issues, integrated REST APIs for real-time transactional workflows, and delivered App Store-ready releases.',
-      gradient: 'linear-gradient(135deg, #ea580c, #f97316)',
-      initials: 'FYG',
-      tech: ['React Native', 'iOS', 'REST APIs', 'App Store Release', 'Debugging'],
-      live: '#',
-      code: 'http://github.com/dhruvgohil448'
     }
   ],
   personal: [
@@ -95,6 +86,42 @@ const PROJECTS = {
       tech: ['HTML', 'CSS', 'JavaScript', 'MySQL', 'Authentication'],
       live: '#',
       code: 'https://github.com/dhruvgohil448/ERP-based-Student-Management-System-.git'
+    },
+    {
+      title: '🩺 Diabetes Predictor',
+      desc: 'Built a machine learning powered web application that predicts the likelihood of diabetes based on user health parameters. Implemented data preprocessing, model training, and a clean UI to deliver real-time predictions with high accuracy.',
+      gradient: 'linear-gradient(135deg, #db2777, #f43f5e)',
+      initials: 'DIA',
+      tech: ['Python', 'Machine Learning', 'Flask', 'Pandas', 'Scikit-learn'],
+      live: '#',
+      code: 'https://github.com/dhruvgohil448/diabetes_predictor.git'
+    },
+    {
+      title: '✈️ Tourism AI',
+      desc: 'Designed an AI-driven tourism assistant that provides personalized travel recommendations, itinerary planning, and destination insights. Leveraged natural language processing and smart data retrieval to enhance the trip planning experience for users.',
+      gradient: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
+      initials: 'TAI',
+      tech: ['Python', 'AI', 'NLP', 'APIs', 'Web App'],
+      live: '#',
+      code: 'https://github.com/dhruvgohil448/Tourism-Ai.git'
+    },
+    {
+      title: '🧠 Mannsathi',
+      desc: 'Built a mental health companion app offering supportive conversations, mood tracking, and personalized wellness resources. Combined thoughtful UX with intelligent responses to create a safe and accessible space for users to reflect and grow.',
+      gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+      initials: 'MNS',
+      tech: ['AI', 'Mental Health', 'Chatbot', 'Web App', 'UX'],
+      live: '#',
+      code: 'https://github.com/dhruvgohil448/Mannsathi.git'
+    },
+    {
+      title: '⚡ Pokéverse',
+      desc: 'Built a native iOS Pokédex app in SwiftUI that lets users browse and explore detailed information about Pokémon. Integrated the PokéAPI for real-time data fetching with smooth navigation, search, and a polished responsive UI for fans.',
+      gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+      initials: 'PKV',
+      tech: ['SwiftUI', 'PokéAPI', 'REST API', 'iOS', 'Swift'],
+      live: '#',
+      code: 'https://github.com/dhruvgohil448/pokeverse.git'
     }
   ]
 };
@@ -269,28 +296,30 @@ export default function Projects() {
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                    <motion.a
-                      href={p.code}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn"
-                      whileHover={{ scale: 1.08 }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        background: 'rgba(255,255,255,0.05)',
-                        color: '#00b4ff',
-                        padding: '6px 12px',
-                        borderRadius: 8,
-                        fontSize: 13,
-                        border: '1px solid rgba(0,180,255,0.2)',
-                        textDecoration: 'none',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Github size={14} /> Code
-                    </motion.a>
+                    {p.initials !== 'STY' && p.code && (
+                      <motion.a
+                        href={p.code}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn"
+                        whileHover={{ scale: 1.08 }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          background: 'rgba(255,255,255,0.05)',
+                          color: '#00b4ff',
+                          padding: '6px 12px',
+                          borderRadius: 8,
+                          fontSize: 13,
+                          border: '1px solid rgba(0,180,255,0.2)',
+                          textDecoration: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Github size={14} /> Code
+                      </motion.a>
+                    )}
                     {p.live !== '#' && (
                       <motion.a
                         href={p.live}

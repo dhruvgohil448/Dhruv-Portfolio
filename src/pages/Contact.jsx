@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import emailjs from "emailjs-com";
 
-import githubLogo from "../../public/github.png";
-import linkedinLogo from "../../public/linkedin.png";
-import gmailLogo from "../../public/gmail.png";
-import whatsappLogo from "../../public/whatsapp.png";
-import instagramLogo from "../../public/insta.png";
-import facebookLogo from "../../public/facebook.png";
+import githubLogo from "/gallery/logos/github.png";
+import linkedinLogo from "/gallery/logos/linkedin.png";
+import gmailLogo from "/gallery/logos/gmail.png";
+import whatsappLogo from "/gallery/logos/whatsapp.png";
+import instagramLogo from "/gallery/logos/insta.png";
+import facebookLogo from "/gallery/logos/facebook.png";
 
 import "../CSS/Contact.css"
 import '../index.css' 
