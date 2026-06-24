@@ -3,8 +3,17 @@ import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Code, Award, Info, Printer, Mail, Phone, Link, MapPin } from "lucide-react";
 
 export default function Resume() {
-  const handlePrint = () => {
-    window.print();
+  const handlePrint = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    try {
+      window.focus();
+      window.print();
+    } catch (err) {
+      console.error("Print failed:", err);
+    }
   };
 
   return (
@@ -78,10 +87,11 @@ export default function Resume() {
             <h2 style={{ fontSize: 28, color: "#00b4ff", margin: 0 }}>📄 Resume</h2>
             <p style={{ color: "#aaa", margin: "5px 0 0 0" }}>Interactive & print-ready layout</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05, background: "#0096d6" }}
-            whileTap={{ scale: 0.95 }}
+          <button
+            type="button"
             onClick={handlePrint}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
             style={{
               display: "flex",
               alignItems: "center",
@@ -94,11 +104,28 @@ export default function Resume() {
               cursor: "pointer",
               fontWeight: 600,
               boxShadow: "0 4px 15px rgba(0, 180, 255, 0.3)",
-              fontSize: 15
+              fontSize: 15,
+              transition: "transform 0.15s ease, background 0.15s ease",
+              zIndex: 10,
+              position: "relative",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#0096d6";
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "#00b4ff";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+            onMouseDownCapture={(e) => {
+              e.currentTarget.style.transform = "scale(0.95)";
+            }}
+            onMouseUpCapture={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
             }}
           >
             <Printer size={18} /> Print / Save PDF
-          </motion.button>
+          </button>
         </div>
 
         {/* --- RESUME SHEET START --- */}

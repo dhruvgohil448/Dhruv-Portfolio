@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "./Skills.css";
 
+const SIZE = 80;
+
 const SKILLS = [
   { name: "Swift", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" },
   { name: "SwiftUI", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" },
@@ -54,14 +56,21 @@ const ROWS = [
 
 export default function Skills() {
   const stageRef = useRef();
+  const ballsRef = useRef([]);
+  const dragRef = useRef(null);
+  const rafRef = useRef(null);
+  const lastFrameRef = useRef(performance.now());
 
   useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return;
-    const circles = Array.from(stage.querySelectorAll(".skill-circle"));
-    const rect = stage.getBoundingClientRect();
-    const placed = [];
 
+    const rect = stage.getBoundingClientRect();
+    const W = rect.width;
+    const H = rect.height;
+    const circles = Array.from(stage.querySelectorAll(".skill-circle"));
+
+    const placed = [];
     const isOverlapping = (x, y, size) =>
       placed.some((p) => {
         const dx = p.x - x;
@@ -69,31 +78,117 @@ export default function Skills() {
         return Math.sqrt(dx * dx + dy * dy) < p.size / 2 + size / 2 + 10;
       });
 
-    circles.forEach((circle) => {
-      const size = circle.offsetWidth;
+    circles.forEach((circle, i) => {
       let x, y, tries = 0;
       do {
-        x = Math.random() * (rect.width - size - 20);
-        y = Math.random() * (rect.height - size - 20);
+        x = Math.random() * (W - SIZE - 20) + 10;
+        y = Math.random() * (H - SIZE - 20) + 10;
         tries++;
-      } while (isOverlapping(x, y, size) && tries < 200);
+      } while (isOverlapping(x, y, SIZE) && tries < 200);
+      placed.push({ x, y, size: SIZE });
 
-      placed.push({ x, y, size });
+      const speed = 0.6;
+      const angle = Math.random() * Math.PI * 2;
+      ballsRef.current[i] = {
+        el: circle,
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+      };
+
       circle.style.left = `${x}px`;
       circle.style.top = `${y}px`;
-
-      const dx = (Math.random() - 0.5) * 80;
-      const dy = (Math.random() - 0.5) * 80;
-      circle.animate(
-        [{ transform: "translate(0, 0)" }, { transform: `translate(${dx}px, ${dy}px)` }],
-        {
-          duration: 5000 + Math.random() * 2000,
-          direction: "alternate",
-          iterations: Infinity,
-          easing: "ease-in-out",
-        }
-      );
     });
+
+    const onMove = (e) => {
+      const drag = dragRef.current;
+      if (!drag) return;
+      const stageRect = stage.getBoundingClientRect();
+      const cx = e.clientX - stageRect.left;
+      const cy = e.clientY - stageRect.top;
+      const ball = ballsRef.current[drag.index];
+      ball.x = Math.max(0, Math.min(W - SIZE, cx - SIZE / 2));
+      ball.y = Math.max(0, Math.min(H - SIZE, cy - SIZE / 2));
+      const now = performance.now();
+      const dt = Math.max(1, now - drag.lastT);
+      drag.vx = ((cx - drag.lastX) / dt) * 16;
+      drag.vy = ((cy - drag.lastY) / dt) * 16;
+      drag.lastX = cx;
+      drag.lastY = cy;
+      drag.lastT = now;
+    };
+
+    const onUp = () => {
+      const drag = dragRef.current;
+      if (!drag) return;
+      const ball = ballsRef.current[drag.index];
+      ball.vx = Math.max(-22, Math.min(22, drag.vx || 0));
+      ball.vy = Math.max(-22, Math.min(22, drag.vy || 0));
+      dragRef.current = null;
+      stage.style.cursor = "default";
+    };
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+
+    const step = (now) => {
+      const dt = Math.min(32, now - lastFrameRef.current) / 16.67;
+      lastFrameRef.current = now;
+      const drag = dragRef.current;
+      const balls = ballsRef.current;
+
+      for (let i = 0; i < balls.length; i++) {
+        const b = balls[i];
+        if (drag && drag.index === i) continue;
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        if (b.x <= 0) { b.x = 0; b.vx = Math.abs(b.vx) * 0.85; }
+        if (b.x + SIZE >= W) { b.x = W - SIZE; b.vx = -Math.abs(b.vx) * 0.85; }
+        if (b.y <= 0) { b.y = 0; b.vy = Math.abs(b.vy) * 0.85; }
+        if (b.y + SIZE >= H) { b.y = H - SIZE; b.vy = -Math.abs(b.vy) * 0.85; }
+        b.vx *= 0.995;
+        b.vy *= 0.995;
+        if (Math.abs(b.vx) < 0.02) b.vx = 0;
+        if (Math.abs(b.vy) < 0.02) b.vy = 0;
+      }
+
+      for (let i = 0; i < balls.length; i++) {
+        for (let j = i + 1; j < balls.length; j++) {
+          const a = balls[i], c = balls[j];
+          const dx = c.x - a.x, dy = c.y - a.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const minDist = SIZE;
+          if (dist > 0 && dist < minDist) {
+            const overlap = (minDist - dist) / 2;
+            const nx = dx / dist, ny = dy / dist;
+            a.x -= nx * overlap; a.y -= ny * overlap;
+            c.x += nx * overlap; c.y += ny * overlap;
+            const rvx = c.vx - a.vx, rvy = c.vy - a.vy;
+            const sep = rvx * nx + rvy * ny;
+            if (sep < 0) {
+              const imp = sep * 0.9;
+              a.vx += imp * nx; a.vy += imp * ny;
+              c.vx -= imp * nx; c.vy -= imp * ny;
+            }
+          }
+        }
+      }
+
+      for (let i = 0; i < balls.length; i++) {
+        balls[i].el.style.left = `${balls[i].x}px`;
+        balls[i].el.style.top = `${balls[i].y}px`;
+      }
+
+      rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
   }, []);
 
   return (
@@ -139,13 +234,26 @@ export default function Skills() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.04, duration: 0.6, ease: "easeOut" }}
               whileHover={{
-                scale: 1.25,
+                scale: 1.18,
                 boxShadow: "0 0 25px 6px rgba(0,255,255,0.5)",
                 background: "rgba(0,255,255,0.12)",
               }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                const stageRect = stageRef.current.getBoundingClientRect();
+                const cx = e.clientX - stageRect.left;
+                const cy = e.clientY - stageRect.top;
+                dragRef.current = { index: i, lastX: cx, lastY: cy, lastT: performance.now(), vx: 0, vy: 0 };
+                const ball = ballsRef.current[i];
+                ball.x = cx - SIZE / 2;
+                ball.y = cy - SIZE / 2;
+                ball.vx = 0;
+                ball.vy = 0;
+                stageRef.current.style.cursor = "grabbing";
+              }}
               style={{
-                width: "80px",
-                height: "80px",
+                width: `${SIZE}px`,
+                height: `${SIZE}px`,
                 borderRadius: "50%",
                 position: "absolute",
                 display: "flex",
@@ -155,29 +263,28 @@ export default function Skills() {
                 background: "rgba(0,255,255,0.06)",
                 border: "1px solid rgba(0,255,255,0.25)",
                 backdropFilter: "blur(8px)",
-                cursor: "pointer",
+                cursor: "grab",
                 transition: "box-shadow 0.4s ease, background 0.4s ease",
+                userSelect: "none",
+                touchAction: "none",
               }}
             >
               {isUrl ? (
                 <motion.img
                   src={s.logo}
                   alt={s.name}
+                  draggable={false}
                   style={{
                     width: "28px",
                     height: "28px",
                     objectFit: "contain",
                     filter: "drop-shadow(0 0 6px rgba(0,255,255,0.4)) brightness(1.2)",
                     marginBottom: "4px",
-                  }}
-                  whileHover={{
-                    filter: "drop-shadow(0 0 10px rgba(0,255,255,0.8)) brightness(1.5)",
-                    rotate: [0, 6, -6, 0],
-                    transition: { duration: 0.5 },
+                    pointerEvents: "none",
                   }}
                 />
               ) : (
-                <span style={{ fontSize: "22px", marginBottom: "3px" }}>
+                <span style={{ fontSize: "22px", marginBottom: "3px", pointerEvents: "none" }}>
                   {s.logo}
                 </span>
               )}
@@ -190,6 +297,7 @@ export default function Skills() {
                   textAlign: "center",
                   padding: "0 4px",
                   lineHeight: 1.1,
+                  pointerEvents: "none",
                 }}
               >
                 {s.name}

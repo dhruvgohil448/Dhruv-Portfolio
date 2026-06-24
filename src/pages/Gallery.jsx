@@ -6,19 +6,20 @@ import "../CSS/Gallery.css";
 const MEETUP_PHOTOS = [
   { src: "/gallery/meetups/swift-bharat-1.jpg", highlight: true },
   { src: "/gallery/meetups/swift-bharat-2.jpg", highlight: true },
+  { src: "/gallery/meetups/swift-bharat-3.jpg" },
+  { src: "/gallery/meetups/swift-bharat-4.jpg" },
+  { src: "/gallery/meetups/swift-bharat-5.jpg" },
+  { src: "/gallery/meetups/swift-bharat-6.jpg" },
+  { src: "/gallery/meetups/swift-bharat-7.jpg" },
+  { src: "/gallery/meetups/swift-bharat-8.jpg" },
+  { src: "/gallery/meetups/swift-bharat-9.jpg" },
   { src: "/gallery/meetups/swift-mumbai-summer-1.jpg" },
-  { src: "/gallery/meetups/swift-mumbai-summer-2.jpg" },
-  { src: "/gallery/meetups/swift-mumbai-summer-3.jpg" },
   { src: "/gallery/meetups/dhruv-meetup-1.jpg" },
-  { src: "/gallery/meetups/dhruv-meetup-2.jpg" },
-  { src: "/gallery/meetups/codex-mumbai-1.jpg" },
-  { src: "/gallery/meetups/codex-mumbai-2.jpg" },
   { src: "/gallery/meetups/build-beyond-screens-1.jpg" },
-  { src: "/gallery/meetups/build-beyond-screens-2.jpg" },
   { src: "/gallery/meetups/swift-mumbai-womenintech-1.jpg" },
   { src: "/gallery/meetups/swift-mumbai-womenintech-2.jpg" },
+  { src: "/gallery/meetups/swift-mumbai-womenintech-3.jpg" },
   { src: "/gallery/meetups/swift-mumbai-1.jpg" },
-  { src: "/gallery/meetups/swift-mumbai-2.jpg" },
 ];
 
 // ✨ Animation Variants
@@ -95,7 +96,7 @@ export default function Gallery() {
                 e.currentTarget.parentElement.classList.add("missing");
               }}
             />
-            {photo.highlight && <span className="featured-badge">⭐ Swift Bharat</span>}
+            {photo.highlight && i < 2 && <span className="featured-badge">⭐ Swift Bharat</span>}
           </motion.div>
         ))}
       </motion.div>

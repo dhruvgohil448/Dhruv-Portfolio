@@ -10,7 +10,6 @@ const links = [
   { label: "Certificates", to: "/certificates" },
   { label: "Resume", to: "/resume" },
   { label: "About Me", to: "/about" },
-  { label: "Contact", to: "/contact" },
 ];
 
 export default function Navbar() {

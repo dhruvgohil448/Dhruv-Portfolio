@@ -33,7 +33,7 @@
 .home-name { background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent)); -webkit-background-clip: text; color: transparent; background-size: 200%; display: inline-block; }
 .typing-container { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.4rem; align-items: flex-start; }
 .typing-effect { font-size: 1.2rem; color: rgba(255,255,255,0.85); max-width: 95%; display: inline-block; overflow: hidden; white-space: nowrap; border-right: 0.15em solid var(--accent); animation: typing 2.5s steps(40,end) forwards, blink .8s infinite, hide-cursor 0s 2.5s forwards; }
-.typing-effect-2 { font-size: 1.2rem; color: rgba(255,255,255,0.85); max-width: 95%; display: inline-block; overflow: hidden; white-space: nowrap; border-right: 0.15em solid var(--accent); opacity: 0; animation: typing 2.5s steps(40,end) 2.5s forwards, blink .8s infinite, show-line 0s 2.5s forwards; }
+.typing-effect-2 { font-size: 1.2rem; color: rgba(255,255,255,0.85); max-width: 95%; display: inline-block; overflow: hidden; white-space: nowrap; border-right: 0.15em solid var(--accent); opacity: 0; animation: typing 2.5s steps(40,end) 2.5s forwards, blink .8s infinite 2.5s, show-line 0s 2.5s forwards, hide-cursor 0s 5s forwards; }
 
 @keyframes hide-cursor {
   to { border-right-color: transparent; }
@@ -75,4 +75,97 @@
   display: flex;
   gap: 1.5rem;
   justify-content: center; /* ensures icons are centered */
+}
+
+/* Contact Section */
+.home-contact {
+  width: 100%;
+  max-width: 1000px;
+  margin: 4rem auto 0;
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(0, 180, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(0, 180, 255, 0.15);
+  box-shadow: 0 0 40px rgba(0, 180, 255, 0.08);
+  text-align: center;
+}
+
+.home-contact-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 0.5rem 0;
+}
+
+.home-contact-sub {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 1rem;
+  margin: 0 0 2rem 0;
+}
+
+.home-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.home-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.2rem;
+  background: rgba(0, 180, 255, 0.06);
+  border: 1px solid rgba(0, 180, 255, 0.18);
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.home-contact-card:hover {
+  background: rgba(0, 180, 255, 0.12);
+  border-color: rgba(0, 180, 255, 0.4);
+}
+
+.home-contact-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 180, 255, 0.12);
+  border-radius: 50%;
+}
+
+.home-contact-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.home-contact-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(0, 180, 255, 0.85);
+}
+
+.home-contact-value {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 600px) {
+  .home-contact-grid {
+    grid-template-columns: 1fr;
+  }
 }

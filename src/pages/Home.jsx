@@ -147,6 +147,91 @@ export default function Home() {
         </div>
       </motion.div>
 
+      {/* Contact Section */}
+      <motion.div
+        className="home-contact"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8 }}
+      >
+        <h2 className="home-contact-title">📬 Get in Touch</h2>
+        <p className="home-contact-sub">Open for freelance iOS work, full-time roles, and tech collaborations.</p>
+
+        <div className="home-contact-grid">
+          {[
+            {
+              icon: "📧",
+              label: "Email",
+              value: "dhruvgohil448@gmail.com",
+              href: "mailto:dhruvgohil448@gmail.com",
+            },
+            {
+              icon: "📱",
+              label: "WhatsApp",
+              value: "+91 88797 27963",
+              href: "https://wa.me/918879727963",
+            },
+            {
+              icon: "📍",
+              label: "Location",
+              value: "Mumbai, Maharashtra, India",
+              href: null,
+            },
+            {
+              icon: "💼",
+              label: "LinkedIn",
+              value: "Dhruv Gohil",
+              href: "https://www.linkedin.com/in/dhruv-gohil-732028257",
+            },
+            {
+              icon: "💻",
+              label: "GitHub",
+              value: "github.com/dhruvgohil448",
+              href: "http://github.com/dhruvgohil448",
+            },
+            {
+              icon: "📸",
+              label: "Instagram",
+              value: "@dhruvgohil_89",
+              href: "https://www.instagram.com/dhruvgohil_89",
+            },
+          ].map((c, i) => {
+            const inner = (
+              <>
+                <span className="home-contact-icon">{c.icon}</span>
+                <div className="home-contact-text">
+                  <span className="home-contact-label">{c.label}</span>
+                  <span className="home-contact-value">{c.value}</span>
+                </div>
+              </>
+            );
+            return c.href ? (
+              <motion.a
+                key={i}
+                href={c.href}
+                target={c.href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="home-contact-card"
+                whileHover={{ y: -4, scale: 1.03, boxShadow: "0 12px 30px rgba(0, 180, 255, 0.25)" }}
+                transition={{ type: "spring", stiffness: 250 }}
+              >
+                {inner}
+              </motion.a>
+            ) : (
+              <motion.div
+                key={i}
+                className="home-contact-card"
+                whileHover={{ y: -4, scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 250 }}
+              >
+                {inner}
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+
     </section>
   )
 }
