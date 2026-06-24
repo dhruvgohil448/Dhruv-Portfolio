@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "./Skills.css";
 
-const SIZE = 80;
+const SIZE_DESKTOP = 80;
+const SIZE_MOBILE = 64;
+const SIZE = typeof window !== "undefined" && window.innerWidth <= 700 ? SIZE_MOBILE : SIZE_DESKTOP;
 
 const SKILLS = [
   { name: "Swift", logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg" },
@@ -65,51 +67,71 @@ export default function Skills() {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const rect = stage.getBoundingClientRect();
-    const W = rect.width;
-    const H = rect.height;
+    const getSize = () => window.innerWidth <= 700 ? SIZE_MOBILE : SIZE_DESKTOP;
+
     const circles = Array.from(stage.querySelectorAll(".skill-circle"));
+    let SIZE = getSize();
 
-    const placed = [];
-    const isOverlapping = (x, y, size) =>
-      placed.some((p) => {
-        const dx = p.x - x;
-        const dy = p.y - y;
-        return Math.sqrt(dx * dx + dy * dy) < p.size / 2 + size / 2 + 10;
+    const init = () => {
+      const rect = stage.getBoundingClientRect();
+      const W = rect.width;
+      const H = rect.height;
+      SIZE = getSize();
+
+      const placed = [];
+      const isOverlapping = (x, y, size) =>
+        placed.some((p) => {
+          const dx = p.x - x;
+          const dy = p.y - y;
+          return Math.sqrt(dx * dx + dy * dy) < p.size / 2 + size / 2 + 8;
+        });
+
+      circles.forEach((circle, i) => {
+        let x, y, tries = 0;
+        do {
+          x = Math.random() * (W - SIZE - 12) + 6;
+          y = Math.random() * (H - SIZE - 12) + 6;
+          tries++;
+        } while (isOverlapping(x, y, SIZE) && tries < 300);
+        placed.push({ x, y, size: SIZE });
+
+        if (!ballsRef.current[i]) {
+          const speed = 0.6;
+          const angle = Math.random() * Math.PI * 2;
+          ballsRef.current[i] = {
+            el: circle,
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+          };
+        } else {
+          ballsRef.current[i].el = circle;
+          ballsRef.current[i].x = Math.max(0, Math.min(W - SIZE, x));
+          ballsRef.current[i].y = Math.max(0, Math.min(H - SIZE, y));
+        }
+
+        circle.style.width = `${SIZE}px`;
+        circle.style.height = `${SIZE}px`;
+        circle.style.left = `${ballsRef.current[i].x}px`;
+        circle.style.top = `${ballsRef.current[i].y}px`;
       });
+    };
 
-    circles.forEach((circle, i) => {
-      let x, y, tries = 0;
-      do {
-        x = Math.random() * (W - SIZE - 20) + 10;
-        y = Math.random() * (H - SIZE - 20) + 10;
-        tries++;
-      } while (isOverlapping(x, y, SIZE) && tries < 200);
-      placed.push({ x, y, size: SIZE });
-
-      const speed = 0.6;
-      const angle = Math.random() * Math.PI * 2;
-      ballsRef.current[i] = {
-        el: circle,
-        x,
-        y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-      };
-
-      circle.style.left = `${x}px`;
-      circle.style.top = `${y}px`;
-    });
+    init();
 
     const onMove = (e) => {
       const drag = dragRef.current;
       if (!drag) return;
       const stageRect = stage.getBoundingClientRect();
-      const cx = e.clientX - stageRect.left;
-      const cy = e.clientY - stageRect.top;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const cx = clientX - stageRect.left;
+      const cy = clientY - stageRect.top;
       const ball = ballsRef.current[drag.index];
-      ball.x = Math.max(0, Math.min(W - SIZE, cx - SIZE / 2));
-      ball.y = Math.max(0, Math.min(H - SIZE, cy - SIZE / 2));
+      const S = getSize();
+      ball.x = Math.max(0, Math.min(stageRect.width - S, cx - S / 2));
+      ball.y = Math.max(0, Math.min(stageRect.height - S, cy - S / 2));
       const now = performance.now();
       const dt = Math.max(1, now - drag.lastT);
       drag.vx = ((cx - drag.lastX) / dt) * 16;
@@ -131,22 +153,29 @@ export default function Skills() {
 
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: false });
+    window.addEventListener("touchend", onUp);
 
     const step = (now) => {
       const dt = Math.min(32, now - lastFrameRef.current) / 16.67;
       lastFrameRef.current = now;
       const drag = dragRef.current;
       const balls = ballsRef.current;
+      const stageRect = stage.getBoundingClientRect();
+      const W = stageRect.width;
+      const H = stageRect.height;
+      const S = getSize();
 
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i];
+        if (!b) continue;
         if (drag && drag.index === i) continue;
         b.x += b.vx * dt;
         b.y += b.vy * dt;
         if (b.x <= 0) { b.x = 0; b.vx = Math.abs(b.vx) * 0.85; }
-        if (b.x + SIZE >= W) { b.x = W - SIZE; b.vx = -Math.abs(b.vx) * 0.85; }
+        if (b.x + S >= W) { b.x = W - S; b.vx = -Math.abs(b.vx) * 0.85; }
         if (b.y <= 0) { b.y = 0; b.vy = Math.abs(b.vy) * 0.85; }
-        if (b.y + SIZE >= H) { b.y = H - SIZE; b.vy = -Math.abs(b.vy) * 0.85; }
+        if (b.y + S >= H) { b.y = H - S; b.vy = -Math.abs(b.vy) * 0.85; }
         b.vx *= 0.995;
         b.vy *= 0.995;
         if (Math.abs(b.vx) < 0.02) b.vx = 0;
@@ -156,9 +185,10 @@ export default function Skills() {
       for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
           const a = balls[i], c = balls[j];
+          if (!a || !c) continue;
           const dx = c.x - a.x, dy = c.y - a.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const minDist = SIZE;
+          const minDist = S;
           if (dist > 0 && dist < minDist) {
             const overlap = (minDist - dist) / 2;
             const nx = dx / dist, ny = dy / dist;
@@ -176,18 +206,31 @@ export default function Skills() {
       }
 
       for (let i = 0; i < balls.length; i++) {
-        balls[i].el.style.left = `${balls[i].x}px`;
-        balls[i].el.style.top = `${balls[i].y}px`;
+        const b = balls[i];
+        if (!b) continue;
+        b.el.style.left = `${b.x}px`;
+        b.el.style.top = `${b.y}px`;
       }
 
       rafRef.current = requestAnimationFrame(step);
     };
     rafRef.current = requestAnimationFrame(step);
 
+    let resizeTimer;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 150);
+    };
+    window.addEventListener("resize", onResize);
+
     return () => {
       cancelAnimationFrame(rafRef.current);
+      clearTimeout(resizeTimer);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onUp);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -250,6 +293,19 @@ export default function Skills() {
                 ball.vx = 0;
                 ball.vy = 0;
                 stageRef.current.style.cursor = "grabbing";
+              }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                const stageRect = stageRef.current.getBoundingClientRect();
+                const t = e.touches[0];
+                const cx = t.clientX - stageRect.left;
+                const cy = t.clientY - stageRect.top;
+                dragRef.current = { index: i, lastX: cx, lastY: cy, lastT: performance.now(), vx: 0, vy: 0 };
+                const ball = ballsRef.current[i];
+                ball.x = cx - SIZE / 2;
+                ball.y = cy - SIZE / 2;
+                ball.vx = 0;
+                ball.vy = 0;
               }}
               style={{
                 width: `${SIZE}px`,

@@ -166,10 +166,38 @@ export default function Navbar() {
             zIndex: 10000,
             padding: 8,
           }}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? "✕" : "☰"}
-        </button>
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? "✕" : "☰"}
+          </button>
+
+        {/* X close (top-left of mobile drawer) */}
+        {isOpen && isMobile && (
+          <button
+            aria-label="Close menu"
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: "fixed",
+              top: 16,
+              left: 16,
+              background: "rgba(0,0,0,0.5)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 10,
+              color: "#fff",
+              fontSize: "1.4rem",
+              cursor: "pointer",
+              zIndex: 10001,
+              width: 44,
+              height: 44,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            ✕
+          </button>
+        )}
       </nav>
 
       {/* --- Mobile Dropdown Menu --- */}
