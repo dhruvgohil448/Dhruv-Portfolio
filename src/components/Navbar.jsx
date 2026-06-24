@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,29 +12,42 @@ const links = [
   { label: "About Me", to: "/about" },
 ];
 
+const MOBILE_BREAKPOINT = 900;
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showButton, setShowButton] = useState(false);
-  const navRef = useRef(null);
-  const linksRef = useRef(null);
-
-  // Check if links overflow nav width (to show hamburger)
-  const checkOverflow = () => {
-    if (!navRef.current || !linksRef.current) return;
-    setShowButton(linksRef.current.scrollWidth > navRef.current.offsetWidth);
-  };
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.innerWidth <= MOBILE_BREAKPOINT
+  );
 
   useEffect(() => {
-    checkOverflow();
-    window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
+    const onResize = () => {
+      const mobile = window.innerWidth <= MOBILE_BREAKPOINT;
+      setIsMobile(mobile);
+      if (!mobile) setIsOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    onResize();
+    return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const showButton = isMobile;
 
   return (
     <>
+      <style>{`
+        @media (max-width: ${MOBILE_BREAKPOINT}px) {
+          .desktop-nav-links { display: none !important; }
+          .mobile-hamburger { display: flex !important; }
+        }
+        @media (min-width: ${MOBILE_BREAKPOINT + 1}px) {
+          .mobile-hamburger { display: none !important; }
+          .desktop-nav-links { display: flex !important; }
+        }
+      `}</style>
+
       {/* --- Navbar --- */}
       <nav
-        ref={navRef}
         style={{
           position: "sticky",
           top: 0,
@@ -74,9 +87,8 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div
-          ref={linksRef}
+          className="desktop-nav-links"
           style={{
-            display: showButton ? "none" : "flex",
             justifyContent: "center",
             gap: "2rem",
             alignItems: "center",
@@ -139,28 +151,30 @@ export default function Navbar() {
         </div>
 
         {/* Hamburger */}
-        {showButton && (
-          <div className="mobile-btn">
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                color: "#fff",
-                fontSize: "1.8rem",
-                cursor: "pointer",
-                zIndex: 10000,
-              }}
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? "✕" : "☰"}
-            </button>
-          </div>
-        )}
+        <button
+          className="mobile-hamburger"
+          aria-label="Toggle menu"
+          style={{
+            display: "none",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "none",
+            border: "none",
+            color: "#fff",
+            fontSize: "1.8rem",
+            cursor: "pointer",
+            zIndex: 10000,
+            padding: 8,
+          }}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? "✕" : "☰"}
+        </button>
       </nav>
 
       {/* --- Mobile Dropdown Menu --- */}
       <AnimatePresence>
-        {isOpen && showButton && (
+        {isOpen && isMobile && (
           <motion.div
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -181,26 +195,11 @@ export default function Navbar() {
               zIndex: 9999,
             }}
           >
-            <button
-              style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                fontSize: "2rem",
-                color: "#fff",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onClick={() => setIsOpen(false)}
-            >
-              ✕
-            </button>
-
             {links.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
+                end
                 onClick={() => setIsOpen(false)}
                 style={{
                   color: "#fff",
