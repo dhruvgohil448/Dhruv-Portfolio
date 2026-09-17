@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Github, ExternalLink, Briefcase, User } from 'lucide-react'
+import { Github, ExternalLink, Briefcase, User, Apple } from 'lucide-react'
 
 const PROJECTS = {
   professional: [
     {
       title: '✈️ Airline Crew Management iOS App',
-      desc: 'Launched an enterprise-scale iOS application used by 10,000+ active crew members, improving scheduling efficiency by 35%. Built custom UIKit components with Auto Layout, reducing UI rendering time by 20% across iPhone and iPad, and optimized Core Data for 50,000+ records to improve data load speed by 40%.',
+      desc: 'Launched an enterprise-scale iOS application (CrewEasy) used by 10,000+ active crew members, improving scheduling efficiency by 35%. Built custom UIKit components with Auto Layout, reducing UI rendering time by 20% across iPhone and iPad, and optimized Core Data for 50,000+ records to improve data load speed by 40%.',
       gradient: 'linear-gradient(135deg, #1e3a8a, #3b82f6)',
       initials: 'ACM',
       tech: ['Swift', 'UIKit', 'Core Data', 'Auto Layout', 'REST APIs'],
-      live: '#',
-      code: 'http://github.com/dhruvgohil448'
+      live: 'https://apps.apple.com/in/app/creweasy/id1645253631',
+      code: null,
+      isAppStore: true
     },
     {
       title: '📦 Boru – Subscription Commerce App',
@@ -20,7 +21,8 @@ const PROJECTS = {
       initials: 'BSC',
       tech: ['Swift', 'UIKit', 'Core Data', 'App Store Deployment'],
       live: 'https://apps.apple.com/in/app/boru/id6447316154',
-      code: 'http://github.com/dhruvgohil448'
+      code: null,
+      isAppStore: true
     },
     {
       title: '💬 Lyncup – Meetup & Social Networking',
@@ -28,64 +30,77 @@ const PROJECTS = {
       gradient: 'linear-gradient(135deg, #db2777, #f43f5e)',
       initials: 'LYN',
       tech: ['SwiftUI', 'REST APIs', 'State Navigation', 'Security'],
-      live: '#',
-      code: 'http://github.com/dhruvgohil448'
+      live: 'https://apps.apple.com/in/app/lyncup/id6758200689',
+      code: null,
+      isAppStore: true
     },
     {
       title: '♿ Flying-Monk – Wheelchair Rental App',
-      desc: 'Worked on a cross-platform wheelchair rental application for iOS and Android, managing development using Xcode and Android Studio. Responsible for improving design, UI/UX, ensuring smooth core functionalities, and integrating payment gateway systems.',
+      desc: 'Developed across iOS (SwiftUI) and Android (Kotlin) for a rental wheelchair platform, owning UI/UX and core functionality on both platforms. Integrated REST APIs, server-side features, and payment gateway systems using Xcode and Android Studio.',
       gradient: 'linear-gradient(135deg, #7c3aed, #6366f1)',
       initials: 'FMN',
       tech: ['SwiftUI', 'Kotlin', 'REST APIs', 'Payment Gateways', 'Android Studio'],
-      live: '#',
-      code: 'http://github.com/dhruvgohil448'
+      live: 'https://apps.apple.com/in/app/flyingmonk/id6802019620',
+      code: null,
+      isAppStore: true
+    },
+    {
+      title: '⚡ Fyre Gig – High-Traffic Fintech iOS App',
+      desc: 'Owned and stabilized the iOS layer of a high-traffic production React Native fintech app, resolving crashes, build issues, and performance bottlenecks. Integrated and optimized REST APIs for real-time transactional workflows, collaborating with a cross-platform team to deliver App Store–ready releases.',
+      gradient: 'linear-gradient(135deg, #ea580c, #f97316)',
+      initials: 'FYR',
+      tech: ['React Native', 'iOS', 'REST APIs', 'Performance Tuning', 'App Store'],
+      live: null,
+      code: null,
+      isConfidential: true
     }
   ],
   personal: [
-    {
-      title: '💻 CodeNest – Codeforces Analyzer',
-      desc: 'Built a specialized iOS application to analyze competitive programming performance on Codeforces. Processes over 10,000+ performance records reliably to render visual insights, charts, and improved navigation, boosting daily user engagement by 18%.',
-      gradient: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-      initials: 'CDS',
-      tech: ['SwiftUI', 'UIKit', 'REST API', 'Data Visualization'],
-      live: '#',
-      code: 'https://github.com/dhruvgohil448/CodeNest.git'
-    },
     {
       title: '🎮 krypticGrind – Gamified Programming',
       desc: 'Developed a gamified competitive programming app with over 500+ active beta users. Implemented VisionKit and an AI-based recommendation engine to suggest personalized programming challenges, resulting in a 15% increase in user solve speed.',
       gradient: 'linear-gradient(135deg, #dc2626, #ea580c)',
       initials: 'KRG',
       tech: ['SwiftUI', 'VisionKit', 'REST API', 'AI Recommendations'],
-      live: '#',
-      code: 'https://github.com/dhruvgohil448/krypticGrind.git'
+      live: null,
+      code: 'https://github.com/dhruvgohil448/krypticGrind'
+    },
+    {
+      title: '💻 CodeNest – Codeforces Analyzer',
+      desc: 'Built a specialized iOS application to analyze competitive programming performance on Codeforces. Processes over 10,000+ performance records reliably to render visual insights, charts, and improved navigation, boosting daily user engagement by 18%.',
+      gradient: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+      initials: 'CDS',
+      tech: ['SwiftUI', 'UIKit', 'REST API', 'Data Visualization'],
+      live: null,
+      code: 'https://github.com/dhruvgohil448/CodeNest'
+    },
+    {
+      title: '🏫 ERP-Based Student Management System',
+      desc: 'Built a role-based ERP web application for 1,000+ users covering attendance, notices, and fee payments. Automated workflows cut manual workload by 40% and database query optimization improved performance by 35%.',
+      gradient: 'linear-gradient(135deg, #475569, #64748b)',
+      initials: 'ERP',
+      tech: ['HTML', 'CSS', 'JavaScript', 'MySQL', 'ERP Architecture'],
+      live: null,
+      code: 'https://github.com/dhruvgohil448/ERP-based-Student-Management-System-'
     },
     {
       title: '📖 ReadBetter – Dyslexia Accessibility Helper',
-      desc: 'Built a 100% offline dyslexia-friendly iOS reading assistant app for the Apple Swift Student Challenge. Implemented Speech Recognition, custom VisionKit scans, accessible reading modes, and active focus tools to improve text readability and comfort.',
+      desc: 'Built a fully offline, dyslexia-friendly iOS reading assistant app for the Apple Swift Student Challenge. Implemented Speech Recognition, custom VisionKit scans, accessible reading modes, and active focus tools to improve text readability and comfort.',
       gradient: 'linear-gradient(135deg, #0891b2, #06b6d4)',
       initials: 'RBT',
-      tech: ['SwiftUI', 'VisionKit', 'SpeechRecognition', 'Apple Playground'],
-      live: '#',
-      code: 'https://github.com/dhruvgohil448/ReadBetter---Where-Words-Feel-Friendly.git'
+      tech: ['SwiftUI', 'VisionKit', 'Speech Recognition', 'Swift Student Challenge'],
+      live: null,
+      code: 'https://github.com/dhruvgohil448/ReadBetter---Where-Words-Feel-Friendly'
     },
     {
-      title: '📈 Stock Yaari – F&O Signals App',
-      desc: 'Delivered a major freelance project by resolving complete iOS app signing, configuration, and provisioning issues for production releases. Stabilized the release pipeline and ensured successful App Store deployment for future updates.',
+      title: '📈 Stock Yaari – Stock F&O Signals App',
+      desc: 'Delivered a major freelance project by resolving complete iOS app configuration, signing, and release issues, and stabilizing the update pipeline for successful App Store deployment.',
       gradient: 'linear-gradient(135deg, #059669, #2563eb)',
       initials: 'STY',
       tech: ['React Native', 'iOS Configuration', 'App Store Signing', 'REST API'],
       live: 'https://apps.apple.com/in/app/stock-yaari-stock-f-o-signals/id1664406057',
-      code: 'http://github.com/dhruvgohil448'
-    },
-    {
-      title: '🏫 Student Management ERP System',
-      desc: 'Developed a web-based ERP system to manage student, faculty, and staff records including attendance, notices, and payments for 1,000+ users. Implemented secure role-based authentication and optimized database queries to improve load performance by 35%.',
-      gradient: 'linear-gradient(135deg, #475569, #64748b)',
-      initials: 'ERP',
-      tech: ['HTML', 'CSS', 'JavaScript', 'MySQL', 'Authentication'],
-      live: '#',
-      code: 'https://github.com/dhruvgohil448/ERP-based-Student-Management-System-.git'
+      code: null,
+      isAppStore: true
     },
     {
       title: '🩺 Diabetes Predictor',
@@ -93,7 +108,7 @@ const PROJECTS = {
       gradient: 'linear-gradient(135deg, #db2777, #f43f5e)',
       initials: 'DIA',
       tech: ['Python', 'Machine Learning', 'Flask', 'Pandas', 'Scikit-learn'],
-      live: '#',
+      live: null,
       code: 'https://github.com/dhruvgohil448/diabetes_predictor.git'
     },
     {
@@ -102,7 +117,7 @@ const PROJECTS = {
       gradient: 'linear-gradient(135deg, #0ea5e9, #14b8a6)',
       initials: 'TAI',
       tech: ['Python', 'AI', 'NLP', 'APIs', 'Web App'],
-      live: '#',
+      live: null,
       code: 'https://github.com/dhruvgohil448/Tourism-Ai.git'
     },
     {
@@ -111,7 +126,7 @@ const PROJECTS = {
       gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
       initials: 'MNS',
       tech: ['AI', 'Mental Health', 'Chatbot', 'Web App', 'UX'],
-      live: '#',
+      live: null,
       code: 'https://github.com/dhruvgohil448/Mannsathi.git'
     },
     {
@@ -120,7 +135,7 @@ const PROJECTS = {
       gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)',
       initials: 'PKV',
       tech: ['SwiftUI', 'PokéAPI', 'REST API', 'iOS', 'Swift'],
-      live: '#',
+      live: null,
       code: 'https://github.com/dhruvgohil448/pokeverse.git'
     }
   ]
@@ -295,8 +310,8 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                    {p.initials !== 'STY' && p.code && (
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                    {p.code && (
                       <motion.a
                         href={p.code}
                         target="_blank"
@@ -306,13 +321,14 @@ export default function Projects() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 5,
-                          background: 'rgba(255,255,255,0.05)',
+                          gap: 6,
+                          background: 'rgba(255,255,255,0.06)',
                           color: '#00b4ff',
-                          padding: '6px 12px',
+                          padding: '6px 14px',
                           borderRadius: 8,
                           fontSize: 13,
-                          border: '1px solid rgba(0,180,255,0.2)',
+                          fontWeight: 500,
+                          border: '1px solid rgba(0,180,255,0.25)',
                           textDecoration: 'none',
                           cursor: 'pointer'
                         }}
@@ -320,7 +336,7 @@ export default function Projects() {
                         <Github size={14} /> Code
                       </motion.a>
                     )}
-                    {p.live !== '#' && (
+                    {p.live && p.live !== '#' && (
                       <motion.a
                         href={p.live}
                         target="_blank"
@@ -330,18 +346,40 @@ export default function Projects() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 5,
+                          gap: 6,
                           background: 'linear-gradient(90deg, #00b4ff, #0077ff)',
                           color: '#fff',
-                          padding: '6px 12px',
+                          padding: '6px 14px',
                           borderRadius: 8,
                           fontSize: 13,
+                          fontWeight: 600,
                           textDecoration: 'none',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 10px rgba(0,180,255,0.3)'
                         }}
                       >
-                        <ExternalLink size={14} /> Live
+                        {p.isAppStore || p.live.includes('apple.com') ? (
+                          <>
+                            <Apple size={14} /> App Store
+                          </>
+                        ) : (
+                          <>
+                            <ExternalLink size={14} /> Live
+                          </>
+                        )}
                       </motion.a>
+                    )}
+                    {p.isConfidential && !p.live && !p.code && (
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: '#888',
+                          fontStyle: 'italic',
+                          padding: '4px 0'
+                        }}
+                      >
+                        🔒 Confidential Client App
+                      </span>
                     )}
                   </div>
                 </div>
