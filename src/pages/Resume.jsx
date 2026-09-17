@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Code, Award, Info, Download, Mail, Phone, Link, MapPin } from "lucide-react";
 
 export default function Resume() {
-  const resumePdfUrl = `${import.meta.env.BASE_URL}Dhruv_Gohil_Resume.pdf`;
+  const resumePdfUrl = "/Dhruv_Gohil_Resume.pdf";
 
   const handleDownload = (e) => {
     // Direct download trigger
